@@ -1,0 +1,115 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com</groupId>
+  <artifactId>ai-app</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <name>text-to-speech</name>
+  <description>A honey pot System</description>
+  <packaging>jar</packaging>
+
+
+  <repositories>
+    <repository>
+      <id>maven-cognitiveservices-speech</id>
+      <name>Microsoft Cognitive Services Speech Maven Repository</name>
+      <url>https://azureai.azureedge.net/maven/</url>
+    </repository>
+  </repositories>
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.2.5.RELEASE</version>
+    <relativePath/> <!-- lookup parent from repository -->
+  </parent>
+  <properties>
+    <!--    定义全局属性-->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <java.version>1.8</java.version>
+    <junit.version>4.12</junit.version>
+    <mybatis.springboot.version>2.1.2</mybatis.springboot.version>
+    <druid.version>1.1.10</druid.version>
+    <jedis.version>2.9.0</jedis.version>
+    <fastjson.version>1.2.38</fastjson.version>
+    <checkstyle.vesion>6.12</checkstyle.vesion>
+    <commons.codec.version>1.10</commons.codec.version>
+    <commons.lang3.version>3.6</commons.lang3.version>
+    <cobetura.version>2.7</cobetura.version>
+    <findbugs.version>3.0.1</findbugs.version>
+    <jacoco.version>0.7.7.201606060606</jacoco.version>
+    <jacoco.exec.location>target/coverage-reports/jacoco-unit.exec</jacoco.exec.location>
+    <!--    <check.config.location>${basedir}/../conf/checkstyle_ruleset_supms.xml</check.config.location>-->
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+      <version>1.2.46</version>
+    </dependency>
+    <dependency>
+      <groupId>com.microsoft.cognitiveservices.speech</groupId>
+      <artifactId>client-sdk</artifactId>
+      <version>1.24.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mybatis.spring.boot</groupId>
+      <artifactId>mybatis-spring-boot-starter</artifactId>
+      <version>${mybatis.springboot.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.junit.vintage</groupId>
+          <artifactId>junit-vintage-engine</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>druid</artifactId>
+      <version>${druid.version}</version>
+    </dependency>
+    <!--		单元测试-->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!--代码风格检查 命令：mvn -B -f pom.xml clean install checkstyle:checkstyle -Dmaven.test.skip=true-->
+    <dependency>
+      <groupId>com.puppycrawl.tools</groupId>
+      <artifactId>checkstyle</artifactId>
+      <version>${checkstyle.vesion}</version>
+    </dependency>
+  </dependencies>
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.7.0</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

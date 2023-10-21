@@ -1,0 +1,39 @@
+
+# 服务器相关
+server:
+  port: 8888
+
+mybatis:
+  type-aliases-package: com.ai.pojo # 映射类类存放的位置
+  configuration:
+    map-underscore-to-camel-case: true # 开启驼峰命名
+    default-fetch-size: 100 # 默认每次只查询100条数据
+    default-statement-timeout: 3000 # 每句sql的等待超时时间
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印执行过的sql
+    use-generated-keys: true # 使用jdbc的主键自增
+  mapper-locations: classpath:/mapper/*.xml
+
+
+# druid
+spring:
+  datasource: # 数据库源配置
+    url: jdbc:mysql://127.0.0.1:3306/text_to_speech?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource # 数据库连接源类型
+    tomcat: # tomcat 数据库连接配置
+      max-active: 1000 # 数据库最大连接数
+      initial-size: 100 # 数据库初始连接数
+      max-wait: 60000 # 配置获取连接等待超时的时间
+      min-idle: 150 # 需要维护的最小空闲连接数目
+      time-between-eviction-runs-millis: 60000 # 间隔多久检测一次空闲连接数目
+      min-evictable-idle-time-millis: 300000 # 每条数据库连接最小生存时间
+      test-on-borrow: false # 指明是否在从池中取出连接前进行检验,如果检验失败, 则从池中去除连接并尝试取出另一个，注意: 设置为true后如果要生效,validation-query参数必须设置为非空字符串
+      test-while-idle: false # 指明连接是否被空闲连接回收器(如果有)进行检验.如果检测失败,则连接将被从池中去除.注意: 设置为true后如果要生效,validation-query参数必须设置为非空字符串
+      test-on-return: false # 指明是否在归还到池中前进行检验，注意: 设置为true后如果要生效, validation-query参数必须设置为非空字符串
+      # validation-query: select 1 # SQL查询,用来验证从连接池取出的连接,在将连接返回给调用者之前.如果指定,则查询必须是一个SQL SELECT并且必须返回至少一行记录
+      num-tests-per-eviction-run: 3 # 在每次空闲连接回收器线程(如果有)运行时检查的连接数量，默认值就是3.
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
