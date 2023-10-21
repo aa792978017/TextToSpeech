@@ -4,6 +4,8 @@ import com.ai.pojo.JobInfo;
 import com.ai.service.JobService;
 import com.ai.utils.TextToSpeechUtils;
 import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +23,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequestMapping(value = "/textToSpeech")
 @CrossOrigin
 public class JobController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobController.class);
 
     private static ConcurrentHashMap<String,Boolean> vaildVoiceFileMap = new ConcurrentHashMap<>();
 

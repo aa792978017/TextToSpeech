@@ -37,15 +37,6 @@ const routes = [
         ]
       }
     ]
-  },
-  {
-    path: '/text-to-speech',
-    name: 'TextToSpeech',
-    component: TextToSpeech,
-    meta: {
-      requireAuth: false,
-      view: true
-    }
   }]
 // 路由对象
 const router = new Router({
@@ -58,7 +49,7 @@ router.beforeEach((to, from, next) => {
     next()
   } else {
     // 如果不是，则返回原路由
-    next(from)
+    next("/tools/home/text-to-speech")
   }
 })
 export default router

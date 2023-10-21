@@ -9,8 +9,7 @@
             <el-input
               type="textarea"
               :rows="17"
-              placeholder="你可将此文本替换为所需的任何文本。你可在此文本框中编写或在此处粘贴你自己的文本。
-"
+              placeholder="你可将此文本替换为所需的任何文本。你可在此文本框中编写或在此处粘贴你自己的文本。"
               v-model="textarea"
               maxlength="2000"
               show-word-limit
@@ -175,8 +174,8 @@ import {
   VOICE_QUALITY_DEFAULT,
   PITCH_DEFAULT,
   RATE_DEFAULT, UNEXPECTED_DOWNLOAD_ERROR, UNEXPECTED_AUDITION_ERROR, UNEXPECTED_MAKEVOICE_ERROR
-} from '../const'
-import {downLoadVoiceFile} from '../utils'
+} from '../config/const'
+import {downLoadVoiceFile} from '../config/utils'
 
 export default {
   name: 'TextToSpeech',

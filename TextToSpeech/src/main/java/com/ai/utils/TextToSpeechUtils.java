@@ -12,7 +12,7 @@ import java.util.Date;
 public class TextToSpeechUtils {
     private static final String SPEECH_KEY = "68bd2b5261c5424dbb0d32db861c98e0";
     private static final String SPEECH_REGION = "eastasia";
-    public static final String BASE_VOICE_FILE_PATH = "src/main/resources/mp3/";
+    public static final String BASE_VOICE_FILE_PATH = "TextToSpeech/src/main/resources/mp3/";
 
     /**
      * 默认文字转语音任务

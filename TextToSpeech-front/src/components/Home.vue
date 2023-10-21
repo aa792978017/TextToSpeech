@@ -1,6 +1,6 @@
 <template>
   <el-container class="main-container">
-    <el-header class="header">工具箱</el-header>
+    <el-header class="header">AI 工具箱</el-header>
     <el-container>
       <el-aside class="aside" width="12%" height="100%">
         <el-menu
@@ -10,14 +10,14 @@
           @close="handleClose"
           background-color="#FFFFFF"
           text-color="#252b3a"
-          active-text-color="#526ecc">
+          active-text-color="#464c59">
           <el-menu-item index="1">
             <i class="el-icon-document"></i>
             <span slot="title" class="menu-title">文本转语音工具</span>
           </el-menu-item>
           <el-menu-item index="2" disabled>
             <i class="el-icon-document"></i>
-            <span slot="title" class="menu-title">Ai 绘画工具</span>
+            <span slot="title" class="menu-title">AI 绘画工具</span>
           </el-menu-item>
         </el-menu>
       </el-aside>
