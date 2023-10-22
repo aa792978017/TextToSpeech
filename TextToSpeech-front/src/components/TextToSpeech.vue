@@ -1,8 +1,5 @@
 <template>
   <el-container class="main">
-    <el-header class="header">
-      [Text To Speech - 文本转语音工具]:  工具异常，有意见或建议可加管理员VX：Cang5271
-    </el-header>
     <el-row class="content">
         <el-col class="left" >
           <el-row class="left-textarea">
@@ -96,7 +93,7 @@
           </el-row>
           <el-row>
             <el-col :span="4" class="right-function-1"><span class="right-function-text">语速</span></el-col>
-            <el-col :span="16" class="right-function-2">
+            <el-col :span="20" class="right-function-2">
               <el-slider
                 v-model="rate"
                 :min="0.5"
@@ -107,12 +104,10 @@
               class="slider">
               </el-slider>
             </el-col>
-            <el-col :span="4" class="right-function-2">
-            </el-col>
           </el-row>
           <el-row>
             <el-col :span="4" class="right-function-1"><span class="right-function-text">音调</span></el-col>
-            <el-col :span="16" class="right-function-2">
+            <el-col :span="20" class="right-function-2">
               <el-slider
                 v-model="pitch"
                 :min="-50"
@@ -122,18 +117,15 @@
                 @change="choosePitch">
               </el-slider>
             </el-col>
-            <el-col :span="4" class="right-function-2">
-            </el-col>
           </el-row>
-          <el-row >
+          <el-row class="right-function-row">
             <el-col :span="2" class="grid-content"></el-col>
-            <el-col :span="17" class="grid-content right-function-3">
+            <el-col :span="22" class="grid-content right-function-3">
               <audio src="" controls="controls" controlsList="nodownload" class="audio">
                 Your browser does not support the audio element.
               </audio>
             </el-col>
-            <el-col :span="5" class="grid-content"></el-col>
-
+            <el-col :span="1" class="grid-content"></el-col>
           </el-row>
           <el-row class="right-function-button-row">
             <el-col :span="5" class="right-function-3 grid-content">
@@ -340,6 +332,7 @@ export default {
 .main{
   background-color: #ffffff;
   width: 100%;
+  height: 100%;
 }
 
 .header{
@@ -347,12 +340,11 @@ export default {
   color: #000000;
   text-align: left;
   line-height: 60px;
-  margin: 10px 10px 0px;
   font-size: 25px;
+  width: 100%;
 }
 .content{
   height: 100%;
-  margin: 0px 15px 15px;
   width: 98% !important;
 }
 .left, .right{
@@ -397,7 +389,10 @@ export default {
   vertical-align: middle;
 }
 .right-function-selector{
-  width: 400px;
+  width: 100%;
+}
+.right-function-row{
+  width: 100%;
 }
 .right-function-button-row{
   margin-top: 20px;
@@ -407,13 +402,27 @@ export default {
   line-height: normal;
 }
 
-.fuction-button {
+.fuction-button,.fuction-button:focus:not(.fuction-button:hover) {
+  //background: #0f0f13;
+  //border-color: #0f0f13;
+  //color: #eee;
+  background: #eee;
+  border-color: #0f0f13;
+  color: #0f0f13;
+}
+
+.fuction-button:focus,.fuction-button:hover{
+  background: #b0b0b0;
+  border-color: #0f0f13;
+  color: #0f0f13;
+}
+.fuction-button:active {
+  //background: #eee;
+  //border-color: #24272d;
+  //color: #24272d;
   background: #24272d;
   border-color: #24272d;
-}
-.fuction-button:hover{
-  background: #989898;
-  border-color:#989898;
+  color: #eee;
 }
 
 </style>
