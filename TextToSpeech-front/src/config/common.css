@@ -1,0 +1,26 @@
+/*清除浏览器默认样式，使其贴紧浏览器边缘，全屏显示*/
+html,body{
+    margin: 0px;
+    height: 100%;
+    width: 100%;
+}
+#app{
+    margin: 0px;
+    height: 100%;
+    width: 100%;
+}
+/* element ui 全局样式调整 */
+.el-container.is-vertical {
+    overflow: auto;
+}
+.el-slider__bar{
+    background-color: #0f0f13 !important;
+}
+
+.el-slider__button, .el-range-editor.is-active, .el-range-editor.is-active:hover, .el-select .el-input.is-focus .el-input__inner, .el-select-dropdown__item.selected {
+    border-color: #0f0f13 !important;
+    color: #0f0f13 !important;
+}
+.el-select .el-input__inner:focus{
+    border-color: #0f0f13 !important;
+}

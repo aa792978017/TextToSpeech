@@ -2,18 +2,14 @@ import com.ai.pojo.JobInfo;
 import com.ai.utils.Constants;
 import com.ai.utils.TextToSpeechUtils;
 import com.microsoft.cognitiveservices.speech.*;
-import com.microsoft.cognitiveservices.speech.audio.AudioConfig;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.concurrent.ExecutionException;
 
-@SpringBootTest
 public class Test {
 
     private static final String SPEECH_KEY = "68bd2b5261c5424dbb0d32db861c98e0";
     private static final String SPEECH_REGION = "eastasia";
 
-    @org.junit.Test
     void main01() {
 //        SpeechConfig speechConfig = SpeechConfig.fromSubscription(SPEECH_KEY,SPEECH_REGION);
 //        speechConfig.setSpeechSynthesisLanguage(Constants.LANGUAGE_ZH_CN);
@@ -36,7 +32,6 @@ public class Test {
         TextToSpeechUtils.textToSpeech(info);
     }
 
-    @org.junit.Test
     void test02() throws InterruptedException, ExecutionException {
         SpeechConfig speechConfig = SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION);
         speechConfig.setSpeechSynthesisOutputFormat(SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm);

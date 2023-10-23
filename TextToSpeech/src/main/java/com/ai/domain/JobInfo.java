@@ -182,4 +182,25 @@ public class JobInfo {
         }
          return fileName;
     }
+
+    @Override
+    public String toString() {
+        return "JobInfo{" +
+                "ssml='" + ssml + '\'' +
+                ", id=" + id +
+                ", ip='" + ip + '\'' +
+                ", textarea='" + textarea + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", time=" + time +
+                ", speechSynthesisResult=" + speechSynthesisResult +
+                ", jobStatus=" + jobStatus +
+                ", language='" + language + '\'' +
+                ", voiceName='" + voiceName + '\'' +
+                ", voiceQuality=" + voiceQuality +
+                ", role='" + role + '\'' +
+                ", style='" + style + '\'' +
+                ", rate='" + rate + '\'' +
+                ", pitch='" + pitch + '\'' +
+                '}';
+    }
 }

@@ -40,6 +40,7 @@ public class JobController {
     @PostMapping("/audition")
     public void audition(HttpServletResponse response, HttpServletRequest request, @RequestBody String body) {
         JobInfo jobInfo = getJobInfoFromRequestBody(body);
+        LOGGER.info("Get a test audition with jobInfo {}", jobInfo.toString());
         jobInfo = jobService.auditionJob(jobInfo);
         if (jobInfo.isJobStatus()) {
             response.setHeader("Content-Type", "audio/mpeg;charset=UTF-8");

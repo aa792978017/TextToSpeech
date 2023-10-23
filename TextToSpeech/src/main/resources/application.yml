@@ -1,10 +1,15 @@
+# 服务自定义配置
+app:
+  service-permits-per-second: 1000 # 全网客户服务接口每秒最大请求数
+  ip-permits-per-second: 5 # 单个ip 访问服务接口每秒最大请求数
+  word-permits-per-day: 10000 # 单个用户，每天可以语言转文字的最大字符数
 
 # 服务器相关
 server:
   port: 8888
 
 mybatis:
-  type-aliases-package: com.ai.pojo # 映射类类存放的位置
+  type-aliases-package: com.ai.domain # 映射类类存放的位置
   configuration:
     map-underscore-to-camel-case: true # 开启驼峰命名
     default-fetch-size: 100 # 默认每次只查询100条数据

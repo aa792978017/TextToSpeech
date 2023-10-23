@@ -64,7 +64,10 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
@@ -98,6 +101,12 @@
       <groupId>com.puppycrawl.tools</groupId>
       <artifactId>checkstyle</artifactId>
       <version>${checkstyle.vesion}</version>
+    </dependency>
+<!--    限流依赖-->
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>30.1-jre</version>
     </dependency>
   </dependencies>
   <build>

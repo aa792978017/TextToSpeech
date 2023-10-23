@@ -95,13 +95,13 @@
             <el-col :span="4" class="right-function-1"><span class="right-function-text">语速</span></el-col>
             <el-col :span="20" class="right-function-2">
               <el-slider
+                class="slider"
                 v-model="rate"
                 :min="0.5"
                 :max="2"
                 :step="0.1"
                 show-input
-                @change="chooseRate"
-              class="slider">
+                @change="chooseRate">
               </el-slider>
             </el-col>
           </el-row>
@@ -417,12 +417,8 @@ export default {
   color: #0f0f13;
 }
 .fuction-button:active {
-  //background: #eee;
-  //border-color: #24272d;
-  //color: #24272d;
   background: #24272d;
   border-color: #24272d;
   color: #eee;
 }
-
 </style>
