@@ -135,7 +135,7 @@
             </el-col>
             <el-col :span="1" class="right-function-3 grid-content"></el-col>
             <el-col :span="4" class="right-function-3 grid-content">
-              <el-button type="primary" :loading="making" @click="makeVoice()" class="fuction-button">{{audioStatus}}<i class="el-icon-edit el-icon--right"></i></el-button>
+<!--              <el-button type="primary" :loading="making" @click="makeVoice()" class="fuction-button">{{audioStatus}}<i class="el-icon-edit el-icon&#45;&#45;right"></i></el-button>-->
             </el-col>
             <el-col :span="1" class="right-function-3 grid-content"></el-col>
             <el-col :span="4" class="right-function-3 grid-content">
@@ -222,7 +222,7 @@ export default {
       // 获取音频流，保存到audio的url中
       let that = this
       that.speechConfig.textArea = that.textarea
-      that.$axios.post('/textToSpeech/audition', that.speechConfig, {headers: {'Content-Type': 'application/x-www-form-urlencode; charset=UTF-8'}, responseType: 'blob'}).then(function (response) {
+      that.$axios.post('/text-to-speech/audition', that.speechConfig, {headers: {'Content-Type': 'application/x-www-form-urlencode; charset=UTF-8'}, responseType: 'blob'}).then(function (response) {
         const audioUrl = window.URL.createObjectURL(response.data)
         const audio = document.querySelector('audio')
         audio.src = audioUrl
@@ -242,7 +242,7 @@ export default {
       that.audioStatus = AUDIO_STATUS_MAKING
       // 调用后端，生成语音
       // 生成语音文件
-      this.$axios.post('/textToSpeech/makeJobVoice', that.speechConfig).then(function (response) {
+      this.$axios.post('/text-to-speech/make-job-voice', that.speechConfig).then(function (response) {
         if (response.data['code'] === 200) {
           that.fileName = response.data['fileName']
           // todo 提示用户生成成功
@@ -270,9 +270,9 @@ export default {
       let param = {
         'fileName': that.fileName
       }
-      this.$axios.post('/textToSpeech/vaildVoiceFile', param).then(function (response) {
+      this.$axios.post('/text-to-speech/vaild-voice-file', param).then(function (response) {
         if (response.data['code'] === 200) {
-          that.$axios.get('/textToSpeech/downLoadFile?fileName=' + that.fileName, {headers: {'Content-Type': 'application/x-www-form-urlencode; charset=UTF-8'}, responseType: 'blob'}).then(function (response) {
+          that.$axios.get('/text-to-speech/download-file?fileName=' + that.fileName, {headers: {'Content-Type': 'application/x-www-form-urlencode; charset=UTF-8'}, responseType: 'blob'}).then(function (response) {
             downLoadVoiceFile(that.fileName, response.data)
           }).catch(function (error) {
             // todo 下载异常，提醒重新尝试下载，或者重新生成

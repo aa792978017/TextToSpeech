@@ -1,4 +1,4 @@
-import com.ai.pojo.JobInfo;
+import com.ai.domain.entity.JobHistory;
 import com.ai.utils.Constants;
 import com.ai.utils.TextToSpeechUtils;
 import com.microsoft.cognitiveservices.speech.*;
@@ -21,7 +21,7 @@ public class Test {
 //        synthesizer.SpeakText("I'm excited to try text-to-speech");
 
 
-        JobInfo info = new JobInfo();
+        JobHistory info = new JobHistory();
         info.setTextarea("我是小王，我爱小汤");
         info.setVoiceName(Constants.LANGUAGE_ZH_CN_XIAORUI);
         info.setRole("Girl");

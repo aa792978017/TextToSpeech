@@ -1,7 +1,9 @@
 package com.ai.utils;
 
-import com.ai.pojo.JobInfo;
+import com.ai.domain.entity.JobHistory;
 import com.microsoft.cognitiveservices.speech.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Date;
@@ -10,18 +12,20 @@ import java.util.Date;
  * 文字转语音核心工具类
  */
 public class TextToSpeechUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TextToSpeechUtils.class);
+
     private static final String SPEECH_KEY = "68bd2b5261c5424dbb0d32db861c98e0";
     private static final String SPEECH_REGION = "eastasia";
     public static final String BASE_VOICE_FILE_PATH = "TextToSpeech/src/main/resources/mp3/";
 
     /**
      * 默认文字转语音任务
-     * @param jobInfo
+     * @param jobHistory
      * @return
      */
-    public static JobInfo textToSpeech(JobInfo jobInfo){
+    public static JobHistory textToSpeech(JobHistory jobHistory){
         // 获取语音解析器
-        SpeechConfig speechConfig = getSpeechConfigFromJobInfo(jobInfo);
+        SpeechConfig speechConfig = getSpeechConfigFromJobHistory(jobHistory);
         SpeechSynthesizer speechSynthesizer = new SpeechSynthesizer(speechConfig,null);
         // 构建ssml文本
         String ssml = "<speak version=\"1.0\" xmlns=\"http://www.w3.org/2001/10/synthesis\"\n" +
@@ -35,72 +39,65 @@ public class TextToSpeechUtils {
                 "    </voice>\n" +
                 "</speak>";
         ssml = ssml
-                .replace("$language$", jobInfo.getLanguage())
-                .replace("$voiceName$", jobInfo.getVoiceName())
-                .replace("$role$", jobInfo.getRole())
-                .replace("$style$", jobInfo.getStyle())
-                .replace("$rate$", jobInfo.getRate())
-                .replace("$pitch$", jobInfo.getPitch())
-                .replace("$textArea$", jobInfo.getTextarea());
-        jobInfo.setSsml(ssml);
-        System.out.println(ssml);
+                .replace("$language$", jobHistory.getLanguage())
+                .replace("$voiceName$", jobHistory.getVoiceName())
+                .replace("$role$", jobHistory.getRole())
+                .replace("$style$", jobHistory.getStyle())
+                .replace("$rate$", jobHistory.getRate())
+                .replace("$pitch$", jobHistory.getPitch())
+                .replace("$textArea$", jobHistory.getTextarea());
+        jobHistory.setSsml(ssml);
         // 通过ssml构建语音文件
         SpeechSynthesisResult speechSynthesisResult = speechSynthesizer.SpeakSsml(ssml);
         // 获取生成好的语音字节流
         if (speechSynthesisResult.getReason() == ResultReason.SynthesizingAudioCompleted) {
-            jobInfo.setSpeechSynthesisResult(speechSynthesisResult);
-            jobInfo.setJobStatus(true);
-            jobInfo.setTime(new Date());
-            System.out.println("Speech synthesized to speaker for text [" + jobInfo.getTextarea() + "]");
+            jobHistory.setSpeechSynthesisResult(speechSynthesisResult);
+
+            LOGGER.info("Text to speech success, text is [{}]", jobHistory.getTextarea());
+            // 保存到本地
+            String fileName = jobHistory.setFileNameByVoiceQuality(CommonsUtils.getRandomFileNameByTime());
+            AudioDataStream stream = AudioDataStream.fromResult(jobHistory.getSpeechSynthesisResult());
+            stream.saveToWavFile(BASE_VOICE_FILE_PATH + fileName);
+            boolean saving = true;
+            int waitTime = 3;
+            while (saving){
+                File audioFile = new File(BASE_VOICE_FILE_PATH + fileName);
+                if (audioFile.exists()){
+                    jobHistory.setFileName(fileName);
+                    jobHistory.setJobStatus(true);
+                    saving = false;
+                    break;
+                }else {
+                    if (waitTime > 0){
+                        try {
+                            waitTime--;
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }else {
+                        break;
+                    }
+                }
+
+            }
         }
         else if (speechSynthesisResult.getReason() == ResultReason.Canceled) {
             SpeechSynthesisCancellationDetails cancellation = SpeechSynthesisCancellationDetails.fromResult(speechSynthesisResult);
-            System.out.println("CANCELED: Reason=" + cancellation.getReason());
+            LOGGER.error("Text to speech canceled, text is [{}], canceled reason is [{}] ",
+                    jobHistory.getTextarea(), cancellation.getReason());
             if (cancellation.getReason() == CancellationReason.Error) {
-                System.out.println("CANCELED: ErrorCode=" + cancellation.getErrorCode());
-                System.out.println("CANCELED: ErrorDetails=" + cancellation.getErrorDetails());
-                System.out.println("CANCELED: Did you set the speech resource key and region values?");
+                LOGGER.error("CANCELED: ErrorCode= [{}], CANCELED: ErrorDetails= [{}], ",
+                        cancellation.getErrorCode(), cancellation.getErrorDetails());
             }
         }
-        return jobInfo;
-    }
-
-    /**
-     * 将音频文件保存到本地
-     * @param jobInfo
-     */
-    public static void saveVoiceFile(JobInfo jobInfo){
-        String fileName = jobInfo.setFileNameByVoiceQuality(CommonsUtils.getRandomFileNameByTime());
-        AudioDataStream stream = AudioDataStream.fromResult(jobInfo.getSpeechSynthesisResult());
-        stream.saveToWavFile(BASE_VOICE_FILE_PATH + fileName);
-        boolean saving = true;
-        int waitTime = 3;
-        while (saving){
-            File wavFile = new File(BASE_VOICE_FILE_PATH + fileName);
-            if (wavFile.exists()){
-                jobInfo.setFileName(fileName);
-                saving = false;
-                break;
-            }else {
-                if (waitTime > 0){
-                    try {
-                        waitTime--;
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
-                }else {
-                    break;
-                }
-            }
-
-        }
+        return jobHistory;
     }
 
 
-    public static SpeechConfig getSpeechConfigFromJobInfo(JobInfo jobInfo){
+    public static SpeechConfig getSpeechConfigFromJobHistory(JobHistory jobHistory){
         SpeechConfig speechConfig = SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION);
-        setVoiceName(speechConfig,jobInfo.getVoiceName());
+        setVoiceName(speechConfig, jobHistory.getVoiceName());
         return speechConfig;
     }
 

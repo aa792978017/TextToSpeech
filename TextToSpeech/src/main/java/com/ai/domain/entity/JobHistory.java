@@ -1,7 +1,6 @@
-package com.ai.pojo;
+package com.ai.domain.entity;
 
 import com.ai.utils.Constants;
-import com.microsoft.cognitiveservices.speech.AudioDataStream;
 import com.microsoft.cognitiveservices.speech.SpeechSynthesisResult;
 
 import java.util.Date;
@@ -9,10 +8,10 @@ import java.util.Date;
 /**
  * 文字转语音任务类
  */
-public class JobInfo {
+public class JobHistory {
 
     private String ssml;
-    private int id;
+    private Integer id;
     private String ip;
     private String textarea;
     private String fileName;
@@ -112,15 +111,15 @@ public class JobInfo {
     }
 
 
-    public JobInfo() {
+    public JobHistory() {
     }
 
-    public JobInfo(String textarea){
+    public JobHistory(String textarea){
         this.textarea = textarea;
         this.jobStatus = false;
     }
 
-    public JobInfo(String textarea, String fileName){
+    public JobHistory(String textarea, String fileName){
         this.textarea = textarea;
         this.fileName = fileName;
         this.jobStatus = false;
@@ -134,11 +133,11 @@ public class JobInfo {
         this.speechSynthesisResult = speechSynthesisResult;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

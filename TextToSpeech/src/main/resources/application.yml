@@ -22,7 +22,7 @@ mybatis:
 # druid
 spring:
   datasource: # 数据库源配置
-    url: jdbc:mysql://192.168.14.100:3306/text_to_speech?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true
+    url: jdbc:mysql://192.168.14.104:3306/text_to_speech?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver
