@@ -91,32 +91,40 @@ public class JobServiceImpl implements JobService {
 
     @Override
     public void downLoadVoice(HttpServletResponse response, String fileName) {
-        // TODO 读取不到的文件抛出异常，并发文件名从map中移出
-        if (StringUtils.isNotEmpty(fileName)){
-            if (vaildVoiceFile(fileName)){
-                response.setHeader("Content-Type", "audio/mpeg;charset=UTF-8");
-                OutputStream out = null;
-                try {
-                    out = response.getOutputStream();
-                    // 读取本地音频文件
-                    File file = new File(TextToSpeechUtils.BASE_VOICE_FILE_PATH + fileName);
-                    FileInputStream fileInputStream = new FileInputStream(file);
-                    byte[] data = new byte[(int) file.length()];
-                    fileInputStream.read(data);
-                    fileInputStream.close();
-                    out.write(data);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }finally {
-                    if (out != null) {
-                        try {
-                            out.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+        try {
+            if (StringUtils.isNotEmpty(fileName)) {
+                if (vaildVoiceFile(fileName)) {
+                    response.setHeader("Content-Type", "audio/mpeg;charset=UTF-8");
+                    OutputStream out = null;
+                    try {
+                        out = response.getOutputStream();
+                        // 读取本地音频文件
+                        File file = new File(TextToSpeechUtils.BASE_VOICE_FILE_PATH + fileName);
+                        FileInputStream fileInputStream = new FileInputStream(file);
+                        byte[] data = new byte[(int) file.length()];
+                        fileInputStream.read(data);
+                        fileInputStream.close();
+                        out.write(data);
+                        LOGGER.info("Download audio file [{}] from local cache success", fileName);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    } finally {
+                        if (out != null) {
+                            try {
+                                out.close();
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                 }
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            vaildVoiceFileMap.remove(fileName);
+            LOGGER.error("Download audio file [{}] error, clear it from cache", fileName);
+
+
         }
     }
 
