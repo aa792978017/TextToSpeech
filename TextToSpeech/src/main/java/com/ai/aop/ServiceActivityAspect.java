@@ -1,5 +1,6 @@
 package com.ai.aop;
 
+import com.ai.configer.ServiceRateLimiter;
 import com.ai.dao.ServiceActivityDataDAO;
 import com.ai.domain.entity.ServiceActivityData;
 
@@ -7,12 +8,14 @@ import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,6 +38,9 @@ public class ServiceActivityAspect {
 
     @Autowired
     private ServiceActivityDataDAO serviceActivityDataDAO;
+
+    @Autowired
+    private ServiceRateLimiter serviceRateLimiter;
 
 
     /**
@@ -66,8 +72,8 @@ public class ServiceActivityAspect {
     /**
      * 统计生成音频次数切面
      */
-    @After("auditionDataStatic() && args(body)")
-    public void afterAudition(String body){
+    @After("auditionDataStatic() && args(request, body)")
+    public void afterAudition(HttpServletRequest request, String body){
         LOGGER.info("Note auditionDataStatic...");
         // 统计当天生成语音的次数
         auditionCount.getAndIncrement();
@@ -76,6 +82,7 @@ public class ServiceActivityAspect {
         String textArea = jsonObject.getString("textArea");
         if (StringUtils.isNotEmpty(textArea)) {
             wordToSpeechCount.getAndAdd(textArea.length());
+            serviceRateLimiter.userTextToSpeechCount(request.getRemoteAddr(), textArea.length());
         }
 
     }

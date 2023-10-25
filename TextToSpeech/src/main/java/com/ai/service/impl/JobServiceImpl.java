@@ -1,16 +1,21 @@
 package com.ai.service.impl;
 
+import com.ai.configer.ServiceRateLimiter;
 import com.ai.dao.JobHistoryDAO;
 import com.ai.domain.entity.JobHistory;
 import com.ai.domain.response.JobVo;
+import com.ai.exception.TextToSpeechException;
 import com.ai.service.JobService;
 import com.ai.utils.TextToSpeechUtils;
+import com.sun.org.apache.bcel.internal.generic.I2F;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static com.ai.exception.ErrorCode.*;
 import static com.ai.utils.TextToSpeechUtils.BASE_VOICE_FILE_PATH;
 
 /**
@@ -43,9 +49,32 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private JobHistoryDAO jobHistoryDAO;
 
+    @Autowired
+    private ServiceRateLimiter serviceRateLimiter;
+
+    @Value("${app.word-permits-per-transform}")
+    private Integer wordPermitsPerTransform;
+
+
+
     @Transactional
     @Override
     public JobVo auditionJob(JobHistory jobHistory) {
+        // 单次文本转语音不能超过5000字符
+        String textArea = jobHistory.getTextarea();
+        String ip = jobHistory.getIp();
+        if (StringUtils.isNotEmpty(textArea)) {
+            if (textArea.length() > wordPermitsPerTransform) {
+                LOGGER.error("Text had exceed the max wordPermitsPerTransform, text length is {}", textArea.length()) ;
+                throw new TextToSpeechException(EXCEED_MAX_WORD_PERMITS_PER_TRANSFORM);
+            }
+        }
+        // 是否超过限额
+        if (serviceRateLimiter.isExceedPerDayUserLimit(ip, textArea.length())) {
+            LOGGER.error("User [{}] today text had exceed, current used quota is {}", ip,
+                    serviceRateLimiter.getUserCurrentPerDayLimit(ip).get());
+            throw new TextToSpeechException(USER_DAY_QUOTA_EXCEED);
+        }
         jobHistoryDAO.insertJobHistory(jobHistory);
         LOGGER.info("Note a auditionJob request to db...");
         JobHistory sameJobHistory = jobHistoryDAO.querySameConfigJobHistory(jobHistory);
@@ -83,7 +112,7 @@ public class JobServiceImpl implements JobService {
             } catch (IOException e) {
                 LOGGER.error("Read audio file from local error, filePath is [{}], ex is [{}]",
                         filePath, ExceptionUtils.getMessage(e));
-                e.printStackTrace();
+                throw new TextToSpeechException(READ_LOCAL_AUDIO_FILE_ERROR);
             }
         }
         return jobVo;
@@ -107,6 +136,7 @@ public class JobServiceImpl implements JobService {
                         out.write(data);
                         LOGGER.info("Download audio file [{}] from local cache success", fileName);
                     } catch (Exception e) {
+                        LOGGER.error("Download audio file [{}] from local cache error", fileName);
                         throw new RuntimeException(e);
                     } finally {
                         if (out != null) {
@@ -120,11 +150,9 @@ public class JobServiceImpl implements JobService {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
             vaildVoiceFileMap.remove(fileName);
             LOGGER.error("Download audio file [{}] error, clear it from cache", fileName);
-
-
+            throw new TextToSpeechException(DOWNLOAD_AUDIO_FILE_ERROR);
         }
     }
 

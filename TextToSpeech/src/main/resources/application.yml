@@ -3,6 +3,7 @@ app:
   service-permits-per-second: 1000 # 全网客户服务接口每秒最大请求数
   ip-permits-per-second: 5 # 单个ip 访问服务接口每秒最大请求数
   word-permits-per-day: 10000 # 单个用户，每天可以语言转文字的最大字符数
+  word-permits-per-transform: 5000 # 每一次文本转语音最大字符数
 
 # 服务器相关
 server:
@@ -22,7 +23,7 @@ mybatis:
 # druid
 spring:
   datasource: # 数据库源配置
-    url: jdbc:mysql://192.168.14.104:3306/text_to_speech?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true
+    url: jdbc:mysql://192.168.14.100:3306/text_to_speech?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true
     username: root
     password: 123456
     driver-class-name: com.mysql.cj.jdbc.Driver

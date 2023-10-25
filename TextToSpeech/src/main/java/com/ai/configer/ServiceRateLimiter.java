@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletRequest;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 限流器
@@ -30,6 +31,9 @@ public class ServiceRateLimiter {
     @Value("${app.word-permits-per-day}")
     private Integer wordPermitsPerDay;
 
+    @Value("${app.word-permits-per-transform}")
+    private Integer wordPermitsPerTransform;
+
     /**
      * 用户限流器集合
      */
@@ -44,7 +48,7 @@ public class ServiceRateLimiter {
     /**
      * 用户每天语言转文字配额记录器
      */
-    private ConcurrentHashMap<String, Integer> userIp2WordCountMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, AtomicInteger> userIp2WordCountMap = new ConcurrentHashMap<>();
 
     /**
      * 全局限流器
@@ -137,8 +141,51 @@ public class ServiceRateLimiter {
         return userIp2TimeStampMap;
     }
 
+    /**
+     * 清空用户限流器
+     * @param userIp
+     */
     public void clearUnActiveUserRateLimit(String userIp){
         userIpRateLimitMap.remove(userIp);
         userIp2TimeStampMap.remove(userIp);
+    }
+
+    /**
+     * 记录用户当天文字转语音配额
+     * @param ip
+     * @param count
+     */
+    public void userTextToSpeechCount(String ip, int count) {
+        // 大于最大限额，后续会抛异常，无需记录
+        if (count > wordPermitsPerDay) {
+            return;
+        }
+        getUserCurrentPerDayLimit(ip).getAndAdd(count);
+    }
+
+    /**
+     * 用户当前请求的音频是否超过每日限额
+     * @param ip
+     * @param count
+     * @return
+     */
+    public boolean isExceedPerDayUserLimit(String ip, int count) {
+        return getUserCurrentPerDayLimit(ip).get() + count > wordPermitsPerTransform;
+    }
+
+    /**
+     * 获取当前用户ip的配额
+     * @param ip
+     * @return
+     */
+    public AtomicInteger getUserCurrentPerDayLimit(String ip) {
+        AtomicInteger currentCurrentCount = null;
+        if (userIp2WordCountMap.containsKey(ip)) {
+            currentCurrentCount = userIp2WordCountMap.get(ip);
+        } else {
+            currentCurrentCount = new AtomicInteger(0);
+            userIp2WordCountMap.put(ip, currentCurrentCount);
+        }
+        return currentCurrentCount;
     }
 }
