@@ -3,6 +3,8 @@ package com.ai.aop;
 import com.ai.dao.ServiceActivityDataDAO;
 import com.ai.domain.entity.ServiceActivityData;
 
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -64,10 +66,17 @@ public class ServiceActivityAspect {
     /**
      * 统计生成音频次数切面
      */
-    @After("auditionDataStatic()")
-    public void afterAudition(){
+    @After("auditionDataStatic() && args(body)")
+    public void afterAudition(String body){
         LOGGER.info("Note auditionDataStatic...");
+        // 统计当天生成语音的次数
         auditionCount.getAndIncrement();
+        // 统计当天文本转语音请求的文本字数
+        JSONObject jsonObject = JSONObject.parseObject(body);
+        String textArea = jsonObject.getString("textArea");
+        if (StringUtils.isNotEmpty(textArea)) {
+            wordToSpeechCount.getAndAdd(textArea.length());
+        }
 
     }
 
