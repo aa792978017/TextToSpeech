@@ -135,9 +135,7 @@
               <el-button type="primary" :loading="making" @click="audition()" class="fuction-button">{{audioStatus}}<i class="el-icon-video-play el-icon--right"></i></el-button>
             </el-col>
             <el-col :span="1" class="right-function-3 grid-content"></el-col>
-            <el-col :span="4" class="right-function-3 grid-content">
-<!--              <el-button type="primary" :loading="making" @click="makeVoice()" class="fuction-button">{{audioStatus}}<i class="el-icon-edit el-icon&#45;&#45;right"></i></el-button>-->
-            </el-col>
+            <el-col :span="4" class="right-function-3 grid-content"></el-col>
             <el-col :span="1" class="right-function-3 grid-content"></el-col>
             <el-col :span="4" class="right-function-3 grid-content">
               <el-button type="primary" @click="download()" class="fuction-button">下载<i class="el-icon-download el-icon--right"></i></el-button>
