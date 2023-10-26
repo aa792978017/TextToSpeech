@@ -62,15 +62,15 @@ public class ScheduleTask {
                 LOGGER.error("Delete audio cache file error, file name is {}",fileName);
             }
         });
-
     }
 
     /**
-     * 每天0点保存前一天服务用户数据
+     * 每天0点保存前一天服务用户数据和初始化用户配额
      */
     @Scheduled(cron = "0 0 0 * * *")
-    public void saveServiceActivityDataDaily(){
-        LOGGER.info("Scheduled task: [saveServiceActivityDataDaily], time: [{}]", new Date());
+    public void saveServiceActivityDataDailyAndUserQuota(){
+        LOGGER.info("Scheduled task: [saveServiceActivityDataDailyAndUserQuota], time: [{}]", new Date());
         serviceActivityAspect.saveServiceActivityData();
+        serviceRateLimiter.initPerDayUserQuota();
     }
 }

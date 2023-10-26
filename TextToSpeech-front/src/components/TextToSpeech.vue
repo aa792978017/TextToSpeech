@@ -8,8 +8,9 @@
               :rows="17"
               placeholder="你可将此文本替换为所需的任何文本。你可在此文本框中编写或在此处粘贴你自己的文本。"
               v-model="textarea"
-              maxlength="2000"
+              :maxlength="max_word_permits_per_transform"
               show-word-limit
+              @change="initAudioStatus"
             class="input_count">
             </el-input>
           </el-row>
@@ -131,7 +132,7 @@
             <el-col :span="5" class="right-function-3 grid-content">
             </el-col>
             <el-col :span="4" class="right-function-3 grid-content">
-              <el-button type="primary" @click="audition()" class="fuction-button">试听<i class="el-icon-video-play el-icon--right"></i></el-button>
+              <el-button type="primary" :loading="making" @click="audition()" class="fuction-button">{{audioStatus}}<i class="el-icon-video-play el-icon--right"></i></el-button>
             </el-col>
             <el-col :span="1" class="right-function-3 grid-content"></el-col>
             <el-col :span="4" class="right-function-3 grid-content">
@@ -165,7 +166,7 @@ import {
   STYLE_DEFAULT,
   VOICE_QUALITY_DEFAULT,
   PITCH_DEFAULT,
-  RATE_DEFAULT, UNEXPECTED_DOWNLOAD_ERROR, UNEXPECTED_AUDITION_ERROR, UNEXPECTED_MAKEVOICE_ERROR
+  RATE_DEFAULT, UNEXPECTED_DOWNLOAD_ERROR, UNEXPECTED_AUDITION_ERROR, UNEXPECTED_MAKEVOICE_ERROR, AUDIO_STATUS_FINISH
 } from '../config/const'
 import {downLoadVoiceFile} from '../config/utils'
 
@@ -173,6 +174,7 @@ export default {
   name: 'TextToSpeech',
   data () {
     return {
+      max_word_permits_per_transform: 2000,
       textAreaLength: 0,
       texAreaMaxLength: TEXTAREA_MAX_LENGTH,
       audioStatus: AUDIO_STATUS_MAKE,
@@ -207,61 +209,64 @@ export default {
 
     }
   },
+  mounted() {
+    this.getGlobalConfig()
+  },
+  beforeDestroy() {
+  },
   methods: {
+    initAudioStatus(){
+      this.making = false;
+      this.audioStatus = AUDIO_STATUS_MAKE
+    },
+    finishAudioStatus(){
+      this.making = false;
+      this.audioStatus = AUDIO_STATUS_FINISH
+    },
+    runningAudioStatus(){
+      this.making = true;
+      this.audioStatus = AUDIO_STATUS_MAKING
+    },
+    // 获取全局配置
+    getGlobalConfig(){
+      let that = this
+      that.$axios.get('/config').then(function (response) {
+        console.log(response.data)
+        that.max_word_permits_per_transform = response.data['max_word_permits_per_transform'];
+        console.log(that.max_word_permits_per_transform)
+      }).catch(function (error) {
+          alert("获取全局配置失败")
+      })
+    },
     // 清空文本框
     clear () {
       this.textarea = '你可将此文本替换为所需的任何文本。你可在此文本框中编写或在此处粘贴你自己的文本'
+      this.initAudioStatus()
     },
     // 整理文本框中的内容
     arrange () {
       // 清除文本中所有空格、换行符号
       this.textarea = this.textarea.replace(/\s*/g, '').replace(/[\r\n]/g, '')
+      this.initAudioStatus()
     },
     // 试听音频
     audition () {
       // 获取音频流，保存到audio的url中
       let that = this
       that.speechConfig.textArea = that.textarea
+      that.runningAudioStatus()
       that.$axios.post('/text-to-speech/audition', that.speechConfig, {headers: {'Content-Type': 'application/x-www-form-urlencode; charset=UTF-8'}, responseType: 'blob'}).then(function (response) {
         const audioUrl = window.URL.createObjectURL(response.data)
         const audio = document.querySelector('audio')
         audio.src = audioUrl
+        that.finishAudioStatus()
         audio.play()
       }).catch(function (error) {
         // todo 提示用户试听音频生成失败，需要重试或联系管理员
         alert(UNEXPECTED_AUDITION_ERROR)
         console.log(error)
         console.log(UNEXPECTED_AUDITION_ERROR)
-      })
-    },
-    // 生成语音
-    makeVoice () {
-      let that = this
-      that.speechConfig.textArea = that.textarea
-      that.making = true
-      that.audioStatus = AUDIO_STATUS_MAKING
-      // 调用后端，生成语音
-      // 生成语音文件
-      this.$axios.post('/text-to-speech/make-job-voice', that.speechConfig).then(function (response) {
-        if (response.data['code'] === 200) {
-          that.fileName = response.data['fileName']
-          // todo 提示用户生成成功
-          alert(response.data['msg'])
-          that.making = false
-          that.audioStatus = AUDIO_STATUS_MAKE
-        } else {
-          // todo 提示用户生成失败，需要重试
-          alert(response.data['msg'])
-          that.making = false
-          that.audioStatus = AUDIO_STATUS_MAKE
-        }
-      }).catch(function (error) {
-        // todo 提示用户生成失败，需要重试
-        alert(UNEXPECTED_MAKEVOICE_ERROR)
-        console.log(error)
-        console.log(UNEXPECTED_MAKEVOICE_ERROR)
-        that.making = false
-        that.audioStatus = AUDIO_STATUS_MAKE
+        that.initAudioStatus()
       })
     },
     // 导出音频文件

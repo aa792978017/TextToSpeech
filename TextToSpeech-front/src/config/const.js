@@ -18,6 +18,8 @@ export const TEXTAREA_MAX_LENGTH = 5000
 // 语音状态
 export const AUDIO_STATUS_MAKING = '生成中'
 export const AUDIO_STATUS_MAKE = '生成'
+
+export const AUDIO_STATUS_FINISH = '试听'
 // 语音文件获取
 export const AUDIO_FILE_GET_FAILURE = '获取音频文件失败'
 

@@ -24,8 +24,9 @@ public interface JobHistoryDAO {
 
   @Select("SELECT * FROM tb_job_history"
           + " WHERE language=#{job.language} AND voice_name=#{job.voiceName} AND role=#{job.role} AND style=#{job.style}"
-          + " AND rate=#{job.rate} AND pitch=#{job.pitch} AND voice_quality=#{job.voiceQuality} AND textarea=#{job.textarea}" +
-          " LIMIT 1")
+          + " AND rate=#{job.rate} AND pitch=#{job.pitch} AND voice_quality=#{job.voiceQuality} AND textarea=#{job.textarea} "
+          + " AND job_status = true" +
+          " ORDER BY `time` DESC LIMIT 1")
   JobHistory querySameConfigJobHistory(@Param("job")JobHistory jobHistory);
 
 

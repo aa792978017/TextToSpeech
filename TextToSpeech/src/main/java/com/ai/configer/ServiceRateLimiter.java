@@ -31,7 +31,7 @@ public class ServiceRateLimiter {
     @Value("${app.word-permits-per-day}")
     private Integer wordPermitsPerDay;
 
-    @Value("${app.word-permits-per-transform}")
+    @Value("${app.max-word-permits-per-transform}")
     private Integer wordPermitsPerTransform;
 
     /**
@@ -169,8 +169,15 @@ public class ServiceRateLimiter {
      * @param count
      * @return
      */
-    public boolean isExceedPerDayUserLimit(String ip, int count) {
+    public boolean isExceedPerDayUserQuota(String ip, int count) {
         return getUserCurrentPerDayLimit(ip).get() + count > wordPermitsPerTransform;
+    }
+
+    /**
+     * 初始化每天用户文字转语音配额
+     */
+    public void initPerDayUserQuota() {
+        userIp2WordCountMap.clear();
     }
 
     /**

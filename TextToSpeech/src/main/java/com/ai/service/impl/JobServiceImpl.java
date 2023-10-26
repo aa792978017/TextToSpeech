@@ -7,11 +7,9 @@ import com.ai.domain.response.JobVo;
 import com.ai.exception.TextToSpeechException;
 import com.ai.service.JobService;
 import com.ai.utils.TextToSpeechUtils;
-import com.sun.org.apache.bcel.internal.generic.I2F;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +50,7 @@ public class JobServiceImpl implements JobService {
     @Autowired
     private ServiceRateLimiter serviceRateLimiter;
 
-    @Value("${app.word-permits-per-transform}")
+    @Value("${app.max-word-permits-per-transform}")
     private Integer wordPermitsPerTransform;
 
 
@@ -70,7 +68,7 @@ public class JobServiceImpl implements JobService {
             }
         }
         // 是否超过限额
-        if (serviceRateLimiter.isExceedPerDayUserLimit(ip, textArea.length())) {
+        if (serviceRateLimiter.isExceedPerDayUserQuota(ip, textArea.length())) {
             LOGGER.error("User [{}] today text had exceed, current used quota is {}", ip,
                     serviceRateLimiter.getUserCurrentPerDayLimit(ip).get());
             throw new TextToSpeechException(USER_DAY_QUOTA_EXCEED);
